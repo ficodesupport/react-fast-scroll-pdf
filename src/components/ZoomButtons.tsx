@@ -72,7 +72,7 @@ const ZoomButtons = ({
 		direction: ZoomDirection.None,
 		lastTimestamp: 0,
 		fitPage: false
-	} ?? 1);
+	});
 
 	const doZoom = useCallback((timestamp: number) => {
 		const { pos, direction, lastTimestamp } = zoomStateRef.current;
@@ -177,7 +177,7 @@ const ZoomButtons = ({
 				disabled={zoomPos <= minZoom}
 				start={zoomOutStart}
 				end={zoomEnd}
-				title="Zoom out Updated 3"
+				title="Zoom out Updated 4"
 			>
 				{ icons.zoomOut }
 			</ZoomButton>
@@ -186,7 +186,7 @@ const ZoomButtons = ({
 				disabled={zoomPos >= maxZoom}
 				start={zoomInStart}
 				end={zoomEnd}
-				title="Zoom in Updated 3"
+				title="Zoom in Updated 4"
 			>
 				{ icons.zoomIn }
 			</ZoomButton>
@@ -199,7 +199,7 @@ const ZoomButtons = ({
 						].filter((b) => !!b).join(" ")}
 						onClick={fitPage}
 						type="button"
-						title="Zoom to fit updated 3"
+						title="Zoom to fit updated 4"
 					>
 						{ icons.fitPage }
 					</button>

@@ -290,7 +290,7 @@ const usePDF = ({
 			if (currPage + 1 < pdfDoc.numPages) {
 				queueRenderPage(currPage + 1, true);
 			}
-			for (let i = 1; i <= pdfDoc.numPages ?? 0; i += 1) {
+			for (let i = 1; i <= pdfDoc.numPages; i += 1) {
 				if (i !== currPage && i !== currPage + 1) {
 					queueRenderPage(i);
 				}
