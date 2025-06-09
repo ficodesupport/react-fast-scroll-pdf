@@ -177,7 +177,7 @@ const ZoomButtons = ({
 				disabled={zoomPos <= minZoom}
 				start={zoomOutStart}
 				end={zoomEnd}
-				title="Zoom out Updated"
+				title="Zoom out Updated 2"
 			>
 				{ icons.zoomOut }
 			</ZoomButton>
@@ -186,7 +186,7 @@ const ZoomButtons = ({
 				disabled={zoomPos >= maxZoom}
 				start={zoomInStart}
 				end={zoomEnd}
-				title="Zoom in Updated"
+				title="Zoom in Updated 2"
 			>
 				{ icons.zoomIn }
 			</ZoomButton>
@@ -199,7 +199,7 @@ const ZoomButtons = ({
 						].filter((b) => !!b).join(" ")}
 						onClick={fitPage}
 						type="button"
-						title="Zoom to fit updated"
+						title="Zoom to fit updated 2"
 					>
 						{ icons.fitPage }
 					</button>

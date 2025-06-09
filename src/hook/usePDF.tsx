@@ -208,9 +208,10 @@ const usePDF = ({
 	
 		const prevScale = scaleRef.current || 1;
 		const oldScrollTop = scrollContainer?.scrollTop ?? 0;
+		const oldScrollHeight = scrollContainer?.scrollHeight ?? 1;
 	
-		// Calculate the content-relative scroll offset
-		const zoomCenterOffset = oldScrollTop / prevScale;
+		// Ratio of scrollTop to content height
+		const visualRatio = oldScrollTop / oldScrollHeight;
 	
 		scaleRef.current = scale;
 		renderQueue.current.length = 0;
@@ -224,6 +225,7 @@ const usePDF = ({
 			const { width, height } = viewportRef.current;
 			page.cleanup();
 	
+			// Update PDF pages
 			setPages((oldPages) =>
 				oldPages.map((pg, index) => {
 					if (!pg) return undefined;
@@ -250,23 +252,30 @@ const usePDF = ({
 			);
 	
 			if (scrollContainer) {
-				setTimeout(() => {
-					const container = scrollContainer;
-					const newScale = scale;
-					let newScrollTop = zoomCenterOffset * newScale;
+				// Wait until new height is rendered
+				const container = scrollContainer;
+				let tries = 0;
 	
-					// Detect zoom direction and adjust
-					const zoomIn = newScale > prevScale;
-					const adjustment = container.clientHeight * 0.3; // 30% of view height
-	
-					if (zoomIn) {
-						newScrollTop -= adjustment; // scroll up slightly
-					} else {
-						newScrollTop += adjustment; // scroll down slightly
+				const waitAndScroll = () => {
+					const newScrollHeight = container.scrollHeight;
+					if (newScrollHeight === oldScrollHeight && tries < 10) {
+						// Wait one more frame
+						tries++;
+						requestAnimationFrame(waitAndScroll);
+						return;
 					}
 	
+					let newScrollTop = newScrollHeight * visualRatio;
+	
+					// Apply zoom direction tweak
+					const zoomDelta = scale - prevScale;
+					const offsetAdjustment = container.clientHeight * 0.25 * Math.sign(zoomDelta);
+					newScrollTop += offsetAdjustment;
+	
 					container.scrollTop = Math.max(0, newScrollTop);
-				}, 0);
+				};
+	
+				requestAnimationFrame(waitAndScroll);
 			}
 		}).catch((e: Error) => {
 			console.error(`Change Zoom ${e}`);
