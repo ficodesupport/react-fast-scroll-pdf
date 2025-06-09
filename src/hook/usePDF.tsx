@@ -269,7 +269,7 @@ const usePDF = ({
 	
 					// Apply zoom direction tweak
 					const zoomDelta = scale - prevScale;
-					const offsetAdjustment = container.clientHeight * 0.25 * Math.sign(zoomDelta);
+					const offsetAdjustment = container.clientHeight * 1.5 * Math.sign(zoomDelta);
 					newScrollTop += offsetAdjustment;
 	
 					container.scrollTop = Math.max(0, newScrollTop);
