@@ -257,7 +257,7 @@ const usePDF = ({
 	
 					// Detect zoom direction and adjust
 					const zoomIn = newScale > prevScale;
-					const adjustment = container.clientHeight * 0.15; // 10% of view height
+					const adjustment = container.clientHeight * 0.3; // 30% of view height
 	
 					if (zoomIn) {
 						newScrollTop -= adjustment; // scroll up slightly
