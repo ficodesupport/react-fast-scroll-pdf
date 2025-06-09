@@ -18,7 +18,7 @@ interface IZoomState {
 	fitPage: boolean
 }
 
-interface IZoomButton {
+interface IZoomButton extends React.ButtonHTMLAttributes<HTMLButtonElement>{
 	className: string
 	disabled: boolean
 	start: () => void
@@ -31,7 +31,8 @@ const ZoomButton = ({
 	disabled,
 	start,
 	end,
-	children
+	children,
+	title,
 }:IZoomButton): JSX.Element => (
 	<button
 		type="button"
@@ -43,6 +44,7 @@ const ZoomButton = ({
 		onMouseDown={start}
 		onMouseLeave={end}
 		onMouseUp={end}
+		title={title}
 	>
 		{ children }
 	</button>
@@ -175,6 +177,7 @@ const ZoomButtons = ({
 				disabled={zoomPos <= minZoom}
 				start={zoomOutStart}
 				end={zoomEnd}
+				title="Zoom out"
 			>
 				{ icons.zoomOut }
 			</ZoomButton>
@@ -183,6 +186,7 @@ const ZoomButtons = ({
 				disabled={zoomPos >= maxZoom}
 				start={zoomInStart}
 				end={zoomEnd}
+				title="Zoom in"
 			>
 				{ icons.zoomIn }
 			</ZoomButton>
@@ -195,6 +199,7 @@ const ZoomButtons = ({
 						].filter((b) => !!b).join(" ")}
 						onClick={fitPage}
 						type="button"
+						title="Zoom to fit"
 					>
 						{ icons.fitPage }
 					</button>
