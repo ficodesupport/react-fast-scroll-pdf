@@ -205,11 +205,12 @@ const usePDF = ({
 
 	const changeZoomStart = useCallback((scale: number) => {
 		processQueue.cancel();
-		
-		// Store the current scale and scroll offset
-		const currentScale = scaleRef.current || 1;
+	
+		const prevScale = scaleRef.current || 1;
 		const oldScrollTop = scrollContainer?.scrollTop ?? 0;
-		const zoomCenterOffset = oldScrollTop / currentScale;
+	
+		// Calculate the content-relative scroll offset
+		const zoomCenterOffset = oldScrollTop / prevScale;
 	
 		scaleRef.current = scale;
 		renderQueue.current.length = 0;
@@ -223,36 +224,48 @@ const usePDF = ({
 			const { width, height } = viewportRef.current;
 			page.cleanup();
 	
-			// Update page components with new dimensions
-			setPages((oldPages) => oldPages.map((pg, index) => {
-				if (!pg) return undefined;
+			setPages((oldPages) =>
+				oldPages.map((pg, index) => {
+					if (!pg) return undefined;
 	
-				const { imageSrc, children } = pg.props;
-				const key = `page${index}`;
-				if (imageSrc) {
+					const { imageSrc, children } = pg.props;
+					const key = `page${index}`;
+					if (imageSrc) {
+						return (
+							<PDFPage key={key} pageNum={index} width={width} height={height} imageSrc={imageSrc}>
+								{children}
+							</PDFPage>
+						);
+					}
 					return (
-						<PDFPage key={key} pageNum={index} width={width} height={height} imageSrc={imageSrc}>
-							{children}
-						</PDFPage>
+						<PlaceholderPage
+							key={key}
+							width={width}
+							height={height}
+							loadingImage={loadingImage}
+							spin={spinLoadingImage}
+						/>
 					);
-				}
-				return (
-					<PlaceholderPage
-						key={key}
-						width={width}
-						height={height}
-						loadingImage={loadingImage}
-						spin={spinLoadingImage}
-					/>
-				);
-			}));
+				})
+			);
 	
-			// Restore scroll position after re-render based on zoom center
 			if (scrollContainer) {
 				setTimeout(() => {
+					const container = scrollContainer;
 					const newScale = scale;
-					const newScrollTop = zoomCenterOffset * newScale;
-					scrollContainer.scrollTop = newScrollTop;
+					let newScrollTop = zoomCenterOffset * newScale;
+	
+					// Detect zoom direction and adjust
+					const zoomIn = newScale > prevScale;
+					const adjustment = container.clientHeight * 0.15; // 10% of view height
+	
+					if (zoomIn) {
+						newScrollTop -= adjustment; // scroll up slightly
+					} else {
+						newScrollTop += adjustment; // scroll down slightly
+					}
+	
+					container.scrollTop = Math.max(0, newScrollTop);
 				}, 0);
 			}
 		}).catch((e: Error) => {
